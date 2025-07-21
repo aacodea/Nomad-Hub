@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NomadHub - Crea y Vende Cursos Desde Cualquier Lugar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3B82F6;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #1F2937;
+            --light: #F3F4F6;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .lifestyle-img {
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .lifestyle-img:hover {
+            transform: scale(1.02);
+        }
+        
+        .ai-integration-card {
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .ai-integration-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .pricing-tier-free {
+            border: 2px solid var(--primary);
+        }
+        
+        .pricing-tier-pro {
+            border: 2px solid var(--accent);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header/Navbar -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-globe text-3xl"></i>
+                    <h1 class="text-2xl font-bold">NomadHub</h1>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#features" class="hover:text-gray-200 font-medium">Para Creadores</a>
+                    <a href="#ai" class="hover:text-gray-200 font-medium">IA Integrada</a>
+                    <a href="#pricing" class="hover:text-gray-200 font-medium">Precios</a>
+                    <a href="#testimonials" class="hover:text-gray-200 font-medium">Historias</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <button id="loginBtn" class="px-4 py-2 rounded-md hover:bg-white hover:text-blue-600 transition">Iniciar Sesión</button>
+                    <button id="signupBtn" class="px-4 py-2 bg-white text-blue-600 rounded-md font-medium hover:bg-gray-100 transition">Empezar Gratis</button>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Vende cursos desde cualquier rincón del mundo</h2>
+                <p class="text-xl mb-8">Plataforma todo-en-uno para nómadas digitales. Comisión del 5% hasta 2 cursos y 100 ventas, después elige un plan que se adapte a tu crecimiento.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button class="px-6 py-3 bg-white text-blue-600 rounded-md font-bold hover:bg-gray-100 transition">Crear Curso Gratis</button>
+                    <button class="px-6 py-3 border-2 border-white text-white rounded-md font-bold hover:bg-white hover:text-blue-600 transition">
+                        <i class="fas fa-play mr-2"></i>Ver Video
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                     alt="Nómada digital trabajando" 
+                     class="lifestyle-img max-w-full h-auto">
+            </div>
+        </div>
+    </section>
+
+    <!-- Lifestyle Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">El Estilo de Vida NomadHub</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="flex flex-col items-center text-center">
+                    <img src="https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                         alt="Trabajando en la playa" 
+                         class="lifestyle-img mb-4 w-full h-64 object-cover">
+                    <h3 class="text-xl font-bold mb-2">Libertad Geográfica</h3>
+                    <p class="text-gray-600">Administra tus cursos desde cualquier lugar con conexión a internet.</p>
+                </div>
+                <div class="flex flex-col items-center text-center">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80" 
+                         alt="Comunidad global" 
+                         class="lifestyle-img mb-4 w-full h-64 object-cover">
+                    <h3 class="text-xl font-bold mb-2">Comunidad Global</h3>
+                    <p class="text-gray-600">Conecta con estudiantes y otros creadores alrededor del mundo.</p>
+                </div>
+                <div class="flex flex-col items-center text-center">
+                    <img src="https://images.unsplash.com/photo-1454165804606-c3aa57c92f63?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1133&q=80" 
+                         alt="Ingresos pasivos" 
+                         class="lifestyle-img mb-4 w-full h-64 object-cover">
+                    <h3 class="text-xl font-bold mb-2">Ingresos Pasivos</h3>
+                    <p class="text-gray-600">Genera dinero mientras exploras nuevos destinos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Integrations Section -->
+    <section id="ai" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Potencia tus Cursos con IA Gratuita</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <!-- AI Card 1 -->
+                <div class="ai-integration-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-robot text-yellow-500 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Asistente de Contenido</h3>
+                            <p class="text-gray-600">Genera descripciones, títulos y esquemas de cursos con IA.</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">ChatGPT</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">Claude AI</span>
+                    </div>
+                </div>
+                
+                <!-- AI Card 2 -->
+                <div class="ai-integration-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-comments text-blue-500 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Chatbot Automatizado</h3>
+                            <p class="text-gray-600">Atiende preguntas frecuentes de estudiantes 24/7.</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">ManyChat</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">Dialogflow</span>
+                    </div>
+                </div>
+                
+                <!-- AI Card 3 -->
+                <div class="ai-integration-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-purple-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-chart-line text-purple-500 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Análisis de Mercado</h3>
+                            <p class="text-gray-600">Identifica tendencias y temas populares para tus cursos.</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">Google Trends</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">AnswerThePublic</span>
+                    </div>
+                </div>
+                
+                <!-- AI Card 4 -->
+                <div class="ai-integration-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-mail-bulk text-green-500 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Email Automatizado</h3>
+                            <p class="text-gray-600">Envía secuencias personalizadas basadas en el comportamiento.</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">Mailchimp AI</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">SmartWriter</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button class="px-6 py-3 bg-blue-600 text-white rounded-md font-bold hover:bg-blue-700 transition">
+                    <i class="fas fa-bolt mr-2"></i>Ver Todas las Integraciones
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Elige tu Plan de Aventura</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Tier -->
+                <div class="pricing-tier-free bg-gray-50 rounded-lg p-6 shadow-sm">
+                    <h3 class="text-xl font-bold mb-2">Explorador</h3>
+                    <p class="text-gray-600 mb-4">Comienza sin costo</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">Gratis</span>
+                        <span class="text-gray-500">+5% por venta</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-blue-500 mr-2"></i>
+                            <span>2 cursos</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-blue-500 mr-2"></i>
+                            <span>Hasta 100 ventas</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-blue-500 mr-2"></i>
+                            <span>Stripe/PayPal básico</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-blue-500 mr-2"></i>
+                            <span>IA básica</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-times text-red-400 mr-2"></i>
+                            <span>Analíticas avanzadas</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition">Empezar Ahora</button>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="pricing-tier-pro bg-white rounded-lg p-6 shadow-lg relative border-2 border-yellow-400">
+                    <div class="absolute top-0 right-0 bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-bl-lg">POPULAR</div>
+                    <h3 class="text-xl font-bold mb-2">Nómada Pro</h3>
+                    <p class="text-gray-600 mb-4">Para creadores en crecimiento</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">$19</span>
+                        <span class="text-gray-500">/mes</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-500 mr-2"></i>
+                            <span>Cursos ilimitados</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-500 mr-2"></i>
+                            <span>Ventas ilimitadas</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-500 mr-2"></i>
+                            <span>Stripe/PayPal avanzado</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-500 mr-2"></i>
+                            <span>IA completa</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-500 mr-2"></i>
+                            <span>Analíticas premium</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-2 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition">Prueba 7 Días Gratis</button>
+                </div>
+                
+                <!-- Business Plan -->
+                <div class="bg-gray-800 text-white rounded-lg p-6 shadow-md">
+                    <h3 class="text-xl font-bold mb-2">Empresario Digital</h3>
+                    <p class="text-gray-300 mb-4">Para negocios establecidos</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">$49</span>
+                        <span class="text-gray-400">/mes</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-400 mr-2"></i>
+                            <span>Cursos ilimitados</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-400 mr-2"></i>
+                            <span>Ventas ilimitadas</span>
+                        </li>
+                        
