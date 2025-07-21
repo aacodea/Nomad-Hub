@@ -1,66 +1,80 @@
-1.0.0 / 2024-08-31
+2.0.0 - 2024-09-04
+==========
+ * Drop support for Node.js <18
+
+1.0.0 - 2024-09-04
+==========
+
+  * Drop support for Node.js below 0.8
+  * Fix: Ignore `If-Modified-Since` in the presence of `If-None-Match`, according to [spec](https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.3-5). Fixes [#35](https://github.com/jshttp/fresh/issues/35)
+
+0.5.2 / 2017-09-13
 ==================
 
-  * drop node <18
-  * allow utf8 as alias for utf-8
+  * Fix regression matching multiple ETags in `If-None-Match`
+  * perf: improve `If-None-Match` token parsing
 
-0.5.4 / 2021-12-10
+0.5.1 / 2017-09-11
 ==================
 
-  * deps: safe-buffer@5.2.1
+  * Fix handling of modified headers with invalid dates
+  * perf: improve ETag match loop
 
-0.5.3 / 2018-12-17
+0.5.0 / 2017-02-21
 ==================
 
-  * Use `safe-buffer` for improved Buffer API
+  * Fix incorrect result when `If-None-Match` has both `*` and ETags
+  * Fix weak `ETag` matching to match spec
+  * perf: delay reading header values until needed
+  * perf: skip checking modified time if ETag check failed
+  * perf: skip parsing `If-None-Match` when no `ETag` header
+  * perf: use `Date.parse` instead of `new Date`
 
-0.5.2 / 2016-12-08
+0.4.0 / 2017-02-05
 ==================
 
-  * Fix `parse` to accept any linear whitespace character
-
-0.5.1 / 2016-01-17
-==================
-
+  * Fix false detection of `no-cache` request directive
   * perf: enable strict mode
+  * perf: hoist regular expressions
+  * perf: remove duplicate conditional
+  * perf: remove unnecessary boolean coercions
 
-0.5.0 / 2014-10-11
+0.3.0 / 2015-05-12
 ==================
 
-  * Add `parse` function
+  * Add weak `ETag` matching support
 
-0.4.0 / 2014-09-21
+0.2.4 / 2014-09-07
 ==================
 
-  * Expand non-Unicode `filename` to the full ISO-8859-1 charset
+  * Support Node.js 0.6
 
-0.3.0 / 2014-09-20
+0.2.3 / 2014-09-07
 ==================
 
-  * Add `fallback` option
-  * Add `type` option
+  * Move repository to jshttp
 
-0.2.0 / 2014-09-19
+0.2.2 / 2014-02-19
 ==================
 
-  * Reduce ambiguity of file names with hex escape in buggy browsers
+  * Revert "Fix for blank page on Safari reload"
 
-0.1.2 / 2014-09-19
+0.2.1 / 2014-01-29
 ==================
 
-  * Fix periodic invalid Unicode filename header
+  * Fix for blank page on Safari reload
 
-0.1.1 / 2014-09-19
+0.2.0 / 2013-08-11
 ==================
 
-  * Fix invalid characters appearing in `filename*` parameter
+  * Return stale for `Cache-Control: no-cache`
 
-0.1.0 / 2014-09-18
+0.1.0 / 2012-06-15
 ==================
 
-  * Make the `filename` argument optional
+  * Add `If-None-Match: *` support
 
-0.0.0 / 2014-09-18
+0.0.1 / 2012-06-10
 ==================
 
   * Initial release
