@@ -1,143 +1,327 @@
 /*!
- * media-typer
- * Copyright(c) 2014-2017 Douglas Christopher Wilson
+ * proxy-addr
+ * Copyright(c) 2014-2016 Douglas Christopher Wilson
  * MIT Licensed
  */
 
 'use strict'
 
 /**
- * RegExp to match type in RFC 6838
- *
- * type-name = restricted-name
- * subtype-name = restricted-name
- * restricted-name = restricted-name-first *126restricted-name-chars
- * restricted-name-first  = ALPHA / DIGIT
- * restricted-name-chars  = ALPHA / DIGIT / "!" / "#" /
- *                          "$" / "&" / "-" / "^" / "_"
- * restricted-name-chars =/ "." ; Characters before first dot always
- *                              ; specify a facet name
- * restricted-name-chars =/ "+" ; Characters after last plus always
- *                              ; specify a structured syntax suffix
- * ALPHA =  %x41-5A / %x61-7A   ; A-Z / a-z
- * DIGIT =  %x30-39             ; 0-9
- */
-var SUBTYPE_NAME_REGEXP = /^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$/
-var TYPE_NAME_REGEXP = /^[A-Za-z0-9][A-Za-z0-9!#$&^_-]{0,126}$/
-var TYPE_REGEXP = /^ *([A-Za-z0-9][A-Za-z0-9!#$&^_-]{0,126})\/([A-Za-z0-9][A-Za-z0-9!#$&^_.+-]{0,126}) *$/
-
-/**
  * Module exports.
- */
-
-exports.format = format
-exports.parse = parse
-exports.test = test
-
-/**
- * Format object to media type.
- *
- * @param {object} obj
- * @return {string}
  * @public
  */
 
-function format (obj) {
-  if (!obj || typeof obj !== 'object') {
-    throw new TypeError('argument obj is required')
+module.exports = proxyaddr
+module.exports.all = alladdrs
+module.exports.compile = compile
+
+/**
+ * Module dependencies.
+ * @private
+ */
+
+var forwarded = require('forwarded')
+var ipaddr = require('ipaddr.js')
+
+/**
+ * Variables.
+ * @private
+ */
+
+var DIGIT_REGEXP = /^[0-9]+$/
+var isip = ipaddr.isValid
+var parseip = ipaddr.parse
+
+/**
+ * Pre-defined IP ranges.
+ * @private
+ */
+
+var IP_RANGES = {
+  linklocal: ['169.254.0.0/16', 'fe80::/10'],
+  loopback: ['127.0.0.1/8', '::1/128'],
+  uniquelocal: ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', 'fc00::/7']
+}
+
+/**
+ * Get all addresses in the request, optionally stopping
+ * at the first untrusted.
+ *
+ * @param {Object} request
+ * @param {Function|Array|String} [trust]
+ * @public
+ */
+
+function alladdrs (req, trust) {
+  // get addresses
+  var addrs = forwarded(req)
+
+  if (!trust) {
+    // Return all addresses
+    return addrs
   }
 
-  var subtype = obj.subtype
-  var suffix = obj.suffix
-  var type = obj.type
-
-  if (!type || !TYPE_NAME_REGEXP.test(type)) {
-    throw new TypeError('invalid type')
+  if (typeof trust !== 'function') {
+    trust = compile(trust)
   }
 
-  if (!subtype || !SUBTYPE_NAME_REGEXP.test(subtype)) {
-    throw new TypeError('invalid subtype')
+  for (var i = 0; i < addrs.length - 1; i++) {
+    if (trust(addrs[i], i)) continue
+
+    addrs.length = i + 1
   }
 
-  // format as type/subtype
-  var string = type + '/' + subtype
+  return addrs
+}
 
-  // append +suffix
-  if (suffix) {
-    if (!TYPE_NAME_REGEXP.test(suffix)) {
-      throw new TypeError('invalid suffix')
+/**
+ * Compile argument into trust function.
+ *
+ * @param {Array|String} val
+ * @private
+ */
+
+function compile (val) {
+  if (!val) {
+    throw new TypeError('argument is required')
+  }
+
+  var trust
+
+  if (typeof val === 'string') {
+    trust = [val]
+  } else if (Array.isArray(val)) {
+    trust = val.slice()
+  } else {
+    throw new TypeError('unsupported trust argument')
+  }
+
+  for (var i = 0; i < trust.length; i++) {
+    val = trust[i]
+
+    if (!Object.prototype.hasOwnProperty.call(IP_RANGES, val)) {
+      continue
     }
 
-    string += '+' + suffix
+    // Splice in pre-defined range
+    val = IP_RANGES[val]
+    trust.splice.apply(trust, [i, 1].concat(val))
+    i += val.length - 1
   }
 
-  return string
+  return compileTrust(compileRangeSubnets(trust))
 }
 
 /**
- * Test media type.
+ * Compile `arr` elements into range subnets.
  *
- * @param {string} string
- * @return {object}
- * @public
+ * @param {Array} arr
+ * @private
  */
 
-function test (string) {
-  if (!string) {
-    throw new TypeError('argument string is required')
+function compileRangeSubnets (arr) {
+  var rangeSubnets = new Array(arr.length)
+
+  for (var i = 0; i < arr.length; i++) {
+    rangeSubnets[i] = parseipNotation(arr[i])
   }
 
-  if (typeof string !== 'string') {
-    throw new TypeError('argument string is required to be a string')
-  }
-
-  return TYPE_REGEXP.test(string.toLowerCase())
+  return rangeSubnets
 }
 
 /**
- * Parse media type to object.
+ * Compile range subnet array into trust function.
  *
- * @param {string} string
- * @return {object}
- * @public
+ * @param {Array} rangeSubnets
+ * @private
  */
 
-function parse (string) {
-  if (!string) {
-    throw new TypeError('argument string is required')
-  }
-
-  if (typeof string !== 'string') {
-    throw new TypeError('argument string is required to be a string')
-  }
-
-  var match = TYPE_REGEXP.exec(string.toLowerCase())
-
-  if (!match) {
-    throw new TypeError('invalid media type')
-  }
-
-  var type = match[1]
-  var subtype = match[2]
-  var suffix
-
-  // suffix after last +
-  var index = subtype.lastIndexOf('+')
-  if (index !== -1) {
-    suffix = subtype.substr(index + 1)
-    subtype = subtype.substr(0, index)
-  }
-
-  return new MediaType(type, subtype, suffix)
+function compileTrust (rangeSubnets) {
+  // Return optimized function based on length
+  var len = rangeSubnets.length
+  return len === 0
+    ? trustNone
+    : len === 1
+      ? trustSingle(rangeSubnets[0])
+      : trustMulti(rangeSubnets)
 }
 
 /**
- * Class for MediaType object.
+ * Parse IP notation string into range subnet.
+ *
+ * @param {String} note
+ * @private
+ */
+
+function parseipNotation (note) {
+  var pos = note.lastIndexOf('/')
+  var str = pos !== -1
+    ? note.substring(0, pos)
+    : note
+
+  if (!isip(str)) {
+    throw new TypeError('invalid IP address: ' + str)
+  }
+
+  var ip = parseip(str)
+
+  if (pos === -1 && ip.kind() === 'ipv6' && ip.isIPv4MappedAddress()) {
+    // Store as IPv4
+    ip = ip.toIPv4Address()
+  }
+
+  var max = ip.kind() === 'ipv6'
+    ? 128
+    : 32
+
+  var range = pos !== -1
+    ? note.substring(pos + 1, note.length)
+    : null
+
+  if (range === null) {
+    range = max
+  } else if (DIGIT_REGEXP.test(range)) {
+    range = parseInt(range, 10)
+  } else if (ip.kind() === 'ipv4' && isip(range)) {
+    range = parseNetmask(range)
+  } else {
+    range = null
+  }
+
+  if (range <= 0 || range > max) {
+    throw new TypeError('invalid range on address: ' + note)
+  }
+
+  return [ip, range]
+}
+
+/**
+ * Parse netmask string into CIDR range.
+ *
+ * @param {String} netmask
+ * @private
+ */
+
+function parseNetmask (netmask) {
+  var ip = parseip(netmask)
+  var kind = ip.kind()
+
+  return kind === 'ipv4'
+    ? ip.prefixLengthFromSubnetMask()
+    : null
+}
+
+/**
+ * Determine address of proxied request.
+ *
+ * @param {Object} request
+ * @param {Function|Array|String} trust
  * @public
  */
 
-function MediaType (type, subtype, suffix) {
-  this.type = type
-  this.subtype = subtype
-  this.suffix = suffix
+function proxyaddr (req, trust) {
+  if (!req) {
+    throw new TypeError('req argument is required')
+  }
+
+  if (!trust) {
+    throw new TypeError('trust argument is required')
+  }
+
+  var addrs = alladdrs(req, trust)
+  var addr = addrs[addrs.length - 1]
+
+  return addr
+}
+
+/**
+ * Static trust function to trust nothing.
+ *
+ * @private
+ */
+
+function trustNone () {
+  return false
+}
+
+/**
+ * Compile trust function for multiple subnets.
+ *
+ * @param {Array} subnets
+ * @private
+ */
+
+function trustMulti (subnets) {
+  return function trust (addr) {
+    if (!isip(addr)) return false
+
+    var ip = parseip(addr)
+    var ipconv
+    var kind = ip.kind()
+
+    for (var i = 0; i < subnets.length; i++) {
+      var subnet = subnets[i]
+      var subnetip = subnet[0]
+      var subnetkind = subnetip.kind()
+      var subnetrange = subnet[1]
+      var trusted = ip
+
+      if (kind !== subnetkind) {
+        if (subnetkind === 'ipv4' && !ip.isIPv4MappedAddress()) {
+          // Incompatible IP addresses
+          continue
+        }
+
+        if (!ipconv) {
+          // Convert IP to match subnet IP kind
+          ipconv = subnetkind === 'ipv4'
+            ? ip.toIPv4Address()
+            : ip.toIPv4MappedAddress()
+        }
+
+        trusted = ipconv
+      }
+
+      if (trusted.match(subnetip, subnetrange)) {
+        return true
+      }
+    }
+
+    return false
+  }
+}
+
+/**
+ * Compile trust function for single subnet.
+ *
+ * @param {Object} subnet
+ * @private
+ */
+
+function trustSingle (subnet) {
+  var subnetip = subnet[0]
+  var subnetkind = subnetip.kind()
+  var subnetisipv4 = subnetkind === 'ipv4'
+  var subnetrange = subnet[1]
+
+  return function trust (addr) {
+    if (!isip(addr)) return false
+
+    var ip = parseip(addr)
+    var kind = ip.kind()
+
+    if (kind !== subnetkind) {
+      if (subnetisipv4 && !ip.isIPv4MappedAddress()) {
+        // Incompatible IP addresses
+        return false
+      }
+
+      // Convert IP to match subnet IP kind
+      ip = subnetisipv4
+        ? ip.toIPv4Address()
+        : ip.toIPv4MappedAddress()
+    }
+
+    return ip.match(subnetip, subnetrange)
+  }
 }
