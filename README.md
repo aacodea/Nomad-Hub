@@ -1,46 +1,93 @@
-# has-symbols <sup>[![Version Badge][2]][1]</sup>
+# media-typer
 
-[![github actions][actions-image]][actions-url]
-[![coverage][codecov-image]][codecov-url]
-[![dependency status][5]][6]
-[![dev dependency status][7]][8]
-[![License][license-image]][license-url]
-[![Downloads][downloads-image]][downloads-url]
+[![NPM Version][npm-version-image]][npm-url]
+[![NPM Downloads][npm-downloads-image]][npm-url]
+[![Node.js Version][node-version-image]][node-version-url]
+[![Build Status][travis-image]][travis-url]
+[![Test Coverage][coveralls-image]][coveralls-url]
 
-[![npm badge][11]][1]
+Simple RFC 6838 media type parser.
 
-Determine if the JS environment has Symbol support. Supports spec, or shams.
+This module will parse a given media type into it's component parts, like type,
+subtype, and suffix. A formatter is also provided to put them back together and
+the two can be combined to normalize media types into a canonical form.
 
-## Example
+If you are looking to parse the string that represents a media type and it's
+parameters in HTTP (for example, the `Content-Type` header), use the
+[content-type module](https://www.npmjs.com/package/content-type).
 
-```js
-var hasSymbols = require('has-symbols');
+## Installation
 
-hasSymbols() === true; // if the environment has native Symbol support. Not polyfillable, not forgeable.
+This is a [Node.js](https://nodejs.org/en/) module available through the
+[npm registry](https://www.npmjs.com/). Installation is done using the
+[`npm install` command](https://docs.npmjs.com/getting-started/installing-npm-packages-locally):
 
-var hasSymbolsKinda = require('has-symbols/shams');
-hasSymbolsKinda() === true; // if the environment has a Symbol sham that mostly follows the spec.
+```sh
+$ npm install media-typer
 ```
 
-## Supported Symbol shams
- - get-own-property-symbols [npm](https://www.npmjs.com/package/get-own-property-symbols) | [github](https://github.com/WebReflection/get-own-property-symbols)
- - core-js [npm](https://www.npmjs.com/package/core-js) | [github](https://github.com/zloirock/core-js)
+## API
 
-## Tests
-Simply clone the repo, `npm install`, and run `npm test`
+<!-- eslint-disable no-unused-vars -->
 
-[1]: https://npmjs.org/package/has-symbols
-[2]: https://versionbadg.es/inspect-js/has-symbols.svg
-[5]: https://david-dm.org/inspect-js/has-symbols.svg
-[6]: https://david-dm.org/inspect-js/has-symbols
-[7]: https://david-dm.org/inspect-js/has-symbols/dev-status.svg
-[8]: https://david-dm.org/inspect-js/has-symbols#info=devDependencies
-[11]: https://nodei.co/npm/has-symbols.png?downloads=true&stars=true
-[license-image]: https://img.shields.io/npm/l/has-symbols.svg
-[license-url]: LICENSE
-[downloads-image]: https://img.shields.io/npm/dm/has-symbols.svg
-[downloads-url]: https://npm-stat.com/charts.html?package=has-symbols
-[codecov-image]: https://codecov.io/gh/inspect-js/has-symbols/branch/main/graphs/badge.svg
-[codecov-url]: https://app.codecov.io/gh/inspect-js/has-symbols/
-[actions-image]: https://img.shields.io/endpoint?url=https://github-actions-badge-u3jn4tfpocch.runkit.sh/inspect-js/has-symbols
-[actions-url]: https://github.com/inspect-js/has-symbols/actions
+```js
+var typer = require('media-typer')
+```
+
+### typer.parse(string)
+
+<!-- eslint-disable no-undef, no-unused-vars -->
+
+```js
+var obj = typer.parse('image/svg+xml')
+```
+
+Parse a media type string. This will return an object with the following
+properties (examples are shown for the string `'image/svg+xml; charset=utf-8'`):
+
+ - `type`: The type of the media type (always lower case). Example: `'image'`
+
+ - `subtype`: The subtype of the media type (always lower case). Example: `'svg'`
+
+ - `suffix`: The suffix of the media type (always lower case). Example: `'xml'`
+
+If the given type string is invalid, then a `TypeError` is thrown.
+
+### typer.format(obj)
+
+<!-- eslint-disable no-undef, no-unused-vars -->
+
+```js
+var obj = typer.format({ type: 'image', subtype: 'svg', suffix: 'xml' })
+```
+
+Format an object into a media type string. This will return a string of the
+mime type for the given object. For the properties of the object, see the
+documentation for `typer.parse(string)`.
+
+If any of the given object values are invalid, then a `TypeError` is thrown.
+
+### typer.test(string)
+
+<!-- eslint-disable no-undef, no-unused-vars -->
+
+```js
+var valid = typer.test('image/svg+xml')
+```
+
+Validate a media type string. This will return `true` is the string is a well-
+formatted media type, or `false` otherwise.
+
+## License
+
+[MIT](LICENSE)
+
+[coveralls-image]: https://badgen.net/coveralls/c/github/jshttp/media-typer/master
+[coveralls-url]: https://coveralls.io/r/jshttp/media-typer?branch=master
+[node-version-image]: https://badgen.net/npm/node/media-typer
+[node-version-url]: https://nodejs.org/en/download
+[npm-downloads-image]: https://badgen.net/npm/dm/media-typer
+[npm-url]: https://npmjs.org/package/media-typer
+[npm-version-image]: https://badgen.net/npm/v/media-typer
+[travis-image]: https://badgen.net/travis/jshttp/media-typer/master
+[travis-url]: https://travis-ci.org/jshttp/media-typer
